@@ -3,14 +3,15 @@ import { WebSocketServer } from 'ws'
 
 const port = process.env.PORT || 8080
 const wss = new WebSocketServer({ port })
-const rooms = new Map()
+const rooms = new Map() // roomId -> [ws, ws]
 
 wss.on('connection', (ws) => {
+	// Receive signaling events from clients.
 	ws.on('message', (msg) => {
 		const data = JSON.parse(msg)
 
 		if (data.type === 'join') {
-			// extract roomId from data
+			// Validate room membership and notify both peers when ready.
 			const { roomId } = data
 
 			if (!rooms.has(roomId)) {
@@ -47,6 +48,7 @@ wss.on('connection', (ws) => {
 		}
 
 		if (data.type === 'create') {
+			// Create an empty room; the join event will place peers into it.
 			const { roomId } = data
 
 			if (rooms.has(roomId)) {
@@ -61,6 +63,7 @@ wss.on('connection', (ws) => {
 		}
 
 		if (data.type === 'signal') {
+			// Relay SDP/ICE messages to the other peer in the room.
 			const room = rooms.get(ws.roomId)
 			if (!room) return
 
@@ -75,6 +78,7 @@ wss.on('connection', (ws) => {
 		}
 	})
 
+	// Cleanup room membership on disconnect.
 	ws.on('close', () => {
 		const room = rooms.get(ws.roomId)
 		if (!room) return
