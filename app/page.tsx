@@ -24,12 +24,12 @@ export default function Home() {
 
   return (
     <div className="h-screen bg-stone-800 bg-cover flex flex-col items-center justify-center gap-10 px-6">
-      <div className="text-9xl font-semibold text-emerald-400">LOGO</div>
+      <div className="text-9xl font-semibold text-emerald-400">Bridge</div>
 
       <div className="flex w-full max-w-lg flex-col items-center gap-4">
         <div className="flex w-lg items-center gap-2 rounded-lg border border-stone-600 bg-stone-900/60 px-4 py-3">
           <input
-            className="w-full bg-transparent text-sm text-stone-100 outline-none"
+            className="w-full bg-transparent text-sm text-stone-300 placeholder-stone-500 outline-none"
             placeholder="Your bridge link will appear here"
             readOnly
             value={link}
@@ -60,7 +60,7 @@ export default function Home() {
           className="p-6 py-3 text-base text-stone-100 transition-colors duration-300 bg-stone-700 rounded-lg hover:bg-stone-600 ease px-7"
           onClick={handleCreate}
         >
-          Generate Bridge
+          Generate
         </button>
       </div>
     </div>
