@@ -18,6 +18,15 @@ export default function Room() {
 	const [messages, setMessages] = useState<string[]>([])
 	const [input, setInput] = useState("")
 	const [copied, setCopied] = useState(false)
+	const peerConnectedRef = useRef(false)
+	const [connectionClosed, setConnectionClosed] = useState(false)
+
+	function addSystemMessage(text: string) {
+		setMessages((prev) => [
+			...prev,
+			`System: ${text}`
+		])
+	}
 
 	useEffect(() => {
 		const socket = createSocket()
@@ -67,10 +76,35 @@ export default function Room() {
 						`Other: ${data.toString()}`
 					])
 				})
+
+				peer.on("connect", () => {
+					peerConnectedRef.current = true
+				})
+
+				peer.on("close", () => {
+					if (peerConnectedRef.current) {
+						addSystemMessage("Connection closed by the other user.")
+						setConnectionClosed(true)
+					}
+				})
+
+				peer.on("error", () => {
+					if (peerConnectedRef.current) {
+						addSystemMessage("Connection error. The peer may have disconnected.")
+						setConnectionClosed(true)
+					}
+				})
 			}
 
 			if (data.type === "signal") {
 				peerRef.current?.signal(data.signal)
+			}
+		}
+
+		socket.onclose = () => {
+			if (peerConnectedRef.current) {
+				addSystemMessage("WebSocket closed. Connection ended.")
+				setConnectionClosed(true)
 			}
 		}
 
@@ -82,7 +116,7 @@ export default function Room() {
 
 	function sendMessage() {
 		const peer = peerRef.current
-		if (!peer || !input.trim()) return
+		if (!peer || connectionClosed || !input.trim()) return
 
 		peer.send(input)
 
@@ -122,21 +156,29 @@ export default function Room() {
 				marginBottom: 10
 			}}>
 				{messages.map((m, i) => (
-					<div key={i}>{m}</div>
+					<div key={i} style={m.startsWith("System:") ? { color: "crimson" } : undefined}>
+						{m}
+					</div>
 				))}
 			</div>
 
-			{/* input */}
-			<input
-				value={input}
-				onChange={(e) => setInput(e.target.value)}
-				placeholder="Type message..."
-				style={{ marginRight: 10 }}
-			/>
+			{connectionClosed ? (
+				<button onClick={() => router.push("/")}>Return to home</button>
+			) : (
+				<>
+					{/* input */}
+					<input
+						value={input}
+						onChange={(e) => setInput(e.target.value)}
+						placeholder="Type message..."
+						style={{ marginRight: 10 }}
+					/>
 
-			<button onClick={sendMessage}>
-				Send
-			</button>
+					<button onClick={sendMessage}>
+						Send
+					</button>
+				</>
+			)}
 		</div>
 	)
 }
