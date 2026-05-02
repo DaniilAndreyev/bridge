@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "bridge",
   "version": "0.1.0",
   "private": true,
@@ -12,7 +13,9 @@
   "dependencies": {
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "simple-peer": "^9.11.1",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
@@ -20,6 +23,8 @@
     "@types/node": "^20",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/simple-peer": "^9.11.9",
+    "@types/ws": "^8.18.1",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
