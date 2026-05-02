@@ -17,7 +17,13 @@ wss.on('connection', (ws) => {
 
 			const room = rooms.get(roomId)
 
-			if (room.length >= 2) return
+			if (room.length >= 2) {
+				ws.send(JSON.stringify({
+					type: "error",
+					message: "Room is full"
+				}))
+				return
+			}
 
 			room.push(ws)
 			ws.roomId = roomId
