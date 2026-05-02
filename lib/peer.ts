@@ -8,13 +8,11 @@ export function createPeer(initiator: boolean) {
 		trickle: false,
 		config: {
 			iceServers: [
+				{ urls: "stun:stun.l.google.com:19302" },
 				{
-					urls: "stun:stun.l.google.com:19302"
-				},
-				{
-					urls: "turn:openrelay.metered.ca:80",
-					username: "openrelayproject",
-					credential: "openrelayproject"
+					urls: "turn:198.168.48.217:3478",
+					username: "bridgeuser",
+					credential: "bridgepass"
 				}
 			]
 		}
