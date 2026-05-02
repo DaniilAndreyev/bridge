@@ -14,6 +14,13 @@ wss.on('connection', (ws) => {
 			if (!rooms.has(roomId)) {
 				rooms.set(roomId, [])
 			}
+
+			const room = rooms.get(roomId)
+
+			if (room.length >= 2) return
+
+			room.push(ws)
+			ws.roomId = roomId
 		}
 	})
 
