@@ -1,24 +1,38 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams, useRouter } from "next/navigation"
 import { createSocket } from "@/lib/socket"
 import { createPeer } from "@/lib/peer"
 
 export default function Room() {
 	const { id } = useParams<{ id: string }>()
+	const searchParams = useSearchParams()
+	const isCreate = searchParams.get("create") === "1"
+	const router = useRouter()
 
 	const socketRef = useRef<WebSocket | null>(null)
 	const peerRef = useRef<any>(null)
+	const createSentRef = useRef(false)
 
 	const [messages, setMessages] = useState<string[]>([])
 	const [input, setInput] = useState("")
+	const [copied, setCopied] = useState(false)
 
 	useEffect(() => {
 		const socket = createSocket()
 		socketRef.current = socket
 
 		socket.onopen = () => {
+			if (isCreate && !createSentRef.current) {
+				socket.send(JSON.stringify({
+					type: "create",
+					roomId: id
+				}))
+				createSentRef.current = true
+				router.replace(`/room/${id}`)
+			}
+
 			socket.send(JSON.stringify({
 				type: "join",
 				roomId: id
@@ -27,6 +41,14 @@ export default function Room() {
 
 		socket.onmessage = (e) => {
 			const data = JSON.parse(e.data)
+
+			if (data.type === "error") {
+				if (data.message === "Room already exists" && isCreate) {
+					return
+				}
+				router.replace("/404")
+				return
+			}
 
 			if (data.type === "ready") {
 				const peer = createPeer(data.initiator)
@@ -72,9 +94,24 @@ export default function Room() {
 		setInput("")
 	}
 
+	async function copyRoomUrl() {
+		try {
+			await navigator.clipboard.writeText(window.location.href)
+			setCopied(true)
+			setTimeout(() => setCopied(false), 1500)
+		} catch {
+			setCopied(false)
+		}
+	}
+
 	return (
 		<div style={{ padding: 20 }}>
-			<h1>Room: {id}</h1>
+			<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+				<h1 style={{ margin: 0 }}>Room: {id}</h1>
+				<button onClick={copyRoomUrl}>
+					{copied ? "Copied" : "Copy link"}
+				</button>
+			</div>
 
 			{/* messages */}
 			<div style={{
