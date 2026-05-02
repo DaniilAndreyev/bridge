@@ -1,9 +1,8 @@
 // WebSocket signaling server that manages rooms, pairs two peers, and relays signals.
 import { WebSocketServer } from 'ws'
 
-// Simple WebSocket room broker for pairing two peers and relaying WebRTC signals.
-
-const wss = new WebSocketServer({ port: 8080 })
+const port = process.env.PORT || 8080
+const wss = new WebSocketServer({ port })
 const rooms = new Map()
 
 wss.on('connection', (ws) => {
