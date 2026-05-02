@@ -1,3 +1,3 @@
 export function createSocket() {
-	return new WebSocket("ws://localhost:8080")
+	return new WebSocket("wss://bridge-zlwx.onrender.com/")
 }

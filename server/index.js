@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws'
 
-const wss = new WebSocketServer({ port: 8080 })
+const port = process.env.PORT || 8080
+const wss = new WebSocketServer({ port })
 const rooms = new Map()
 
 wss.on('connection', (ws) => {
