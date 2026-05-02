@@ -1,3 +1,3 @@
-export default function RoomLayout() {
-  return <div>Text</div>
+export default function RoomLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+	return <div>{children}</div>
 }
