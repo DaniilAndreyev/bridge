@@ -7,7 +7,14 @@ wss.on('connection', (ws) => {
 	ws.on('message', (msg) => {
 		const data = JSON.parse(msg)
 
-		ws.roomId = roomId
+		if (data.type === 'join') {
+			// extract roomId from data
+			const { roomId } = data
+
+			if (!rooms.has(roomId)) {
+				rooms.set(roomId, [])
+			}
+		}
 	})
 
 	ws.on('close', () => {
