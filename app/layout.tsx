@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fira_Mono } from "next/font/google";
+import { Inter, Fira_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,6 +13,11 @@ const fira = Fira_Mono({
   subsets: ["latin"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
+});
+
 
 export const metadata: Metadata = {
   title: "Bridge",
@@ -23,7 +28,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
   return (
     <html
       lang="en"
-      className={`${fira.variable} h-full antialiased`}
+      className={`${fira.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

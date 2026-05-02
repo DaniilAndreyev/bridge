@@ -1,3 +1,4 @@
+// WebSocket signaling server that manages rooms, pairs two peers, and relays signals.
 import { WebSocketServer } from 'ws'
 
 const port = process.env.PORT || 8080

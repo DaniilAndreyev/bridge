@@ -1,11 +1,14 @@
 "use client"
 
+// Room page: joins/creates rooms, negotiates WebRTC peers, and renders chat UI.
+
 import { useEffect, useRef, useState } from "react"
 import { useParams, useSearchParams, useRouter } from "next/navigation"
 import { createSocket } from "@/lib/socket"
 import { createPeer } from "@/lib/peer"
 
 export default function Room() {
+	// Room UI: handles signaling, peer connection, and message rendering.
 	const { id } = useParams<{ id: string }>()
 	const searchParams = useSearchParams()
 	const isCreate = searchParams.get("create") === "1"
@@ -14,13 +17,16 @@ export default function Room() {
 	const socketRef = useRef<WebSocket | null>(null)
 	const peerRef = useRef<any>(null)
 	const createSentRef = useRef(false)
+	const messagesRef = useRef<HTMLDivElement | null>(null)
 
 	const [messages, setMessages] = useState<string[]>([])
 	const [input, setInput] = useState("")
 	const [copied, setCopied] = useState(false)
 	const peerConnectedRef = useRef(false)
 	const [connectionClosed, setConnectionClosed] = useState(false)
+	const primaryButtonClass = "p-6 py-3 text-base text-stone-100 transition-colors duration-300 bg-stone-700 rounded-lg hover:bg-stone-600 ease px-7"
 
+	// Add a system message to the message stream.
 	function addSystemMessage(text: string) {
 		setMessages((prev) => [
 			...prev,
@@ -114,6 +120,13 @@ export default function Room() {
 		}
 	}, [id])
 
+	useEffect(() => {
+		const container = messagesRef.current
+		if (!container) return
+		container.scrollTop = container.scrollHeight
+	}, [messages.length])
+
+	// Send a chat message over the established peer connection.
 	function sendMessage() {
 		const peer = peerRef.current
 		if (!peer || connectionClosed || !input.trim()) return
@@ -128,6 +141,7 @@ export default function Room() {
 		setInput("")
 	}
 
+	// Copy the current room URL for sharing.
 	async function copyRoomUrl() {
 		try {
 			await navigator.clipboard.writeText(window.location.href)
@@ -139,45 +153,56 @@ export default function Room() {
 	}
 
 	return (
-		<div style={{ padding: 20 }}>
-			<div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-				<h1 style={{ margin: 0 }}>Room: {id}</h1>
-				<button onClick={copyRoomUrl}>
+		<div className="min-h-screen bg-stone-800 bg-cover flex flex-col items-center justify-center gap-6 px-6">
+			<div className="flex w-full max-w-2xl justify-end">
+				<button
+					className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium uppercase tracking-wide text-stone-100 transition hover:bg-stone-700/40"
+					onClick={copyRoomUrl}
+				>
 					{copied ? "Copied" : "Copy link"}
 				</button>
 			</div>
 
 			{/* messages */}
-			<div style={{
-				height: 300,
-				border: "1px solid #ccc",
-				padding: 10,
-				overflowY: "auto",
-				marginBottom: 10
-			}}>
-				{messages.map((m, i) => (
-					<div key={i} style={m.startsWith("System:") ? { color: "crimson" } : undefined}>
-						{m}
-					</div>
-				))}
+			<div ref={messagesRef} className="room-scrollbar w-full max-w-2xl min-h-[320px] max-h-[420px] overflow-y-auto rounded-xl border border-stone-700/40 bg-stone-900/20 px-3 py-2">
+				{messages.map((m, i) => {
+					const isSystem = m.startsWith("System:")
+					const isYou = m.startsWith("You:")
+					const alignment = isSystem ? "justify-center" : isYou ? "justify-start" : "justify-end"
+					const text = m.replace(/^You:\s?|^Other:\s?|^System:\s?/, "")
+
+					return (
+						<div key={i} className={`flex ${alignment} py-1`}>
+							<div className={isSystem ? "text-xs text-rose-400" : "text-sm text-stone-100"}>
+								{text}
+							</div>
+						</div>
+					)
+				})}
 			</div>
 
 			{connectionClosed ? (
-				<button onClick={() => router.push("/")}>Return to home</button>
+				<button className={primaryButtonClass} onClick={() => router.push("/")}>Return to home</button>
 			) : (
-				<>
+				<div className="flex w-full max-w-2xl items-center gap-3">
 					{/* input */}
 					<input
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								e.preventDefault()
+								sendMessage()
+							}
+						}}
 						placeholder="Type message..."
-						style={{ marginRight: 10 }}
+						className="flex-1 rounded-lg border border-stone-600 bg-stone-900/60 px-4 py-3 text-sm text-stone-100 outline-none"
 					/>
 
-					<button onClick={sendMessage}>
+					<button className={primaryButtonClass} onClick={sendMessage}>
 						Send
 					</button>
-				</>
+				</div>
 			)}
 		</div>
 	)

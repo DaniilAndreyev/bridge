@@ -1,13 +1,17 @@
 "use client"
 
+// Home page: generates shareable room links and provides copy controls.
+
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function Home() {
+  // Home UI: generates a shareable room URL and lets users copy it.
   const router = useRouter()
   const [link, setLink] = useState("")
   const [copied, setCopied] = useState(false)
 
+  // Generate a new room URL without navigating away.
   function handleCreate() {
     const roomId = crypto.randomUUID()
     const url = `${window.location.origin}/room/${roomId}?create=1`
@@ -15,6 +19,7 @@ export default function Home() {
     setCopied(false)
   }
 
+  // Copy the generated room URL to the clipboard.
   async function handleCopy() {
     if (!link) return
     await navigator.clipboard.writeText(link)
