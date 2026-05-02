@@ -1,3 +1,3 @@
 export function createSocket() {
-	return new WebSocket("wss://bridge-zlwx.onrender.com/")
+	return new WebSocket(process.env.NEXT_PUBLIC_WS_URL!)
 }
