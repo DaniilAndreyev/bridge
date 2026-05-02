@@ -27,6 +27,17 @@ wss.on('connection', (ws) => {
 
 			room.push(ws)
 			ws.roomId = roomId
+
+			if (room.length === 2) {
+				room[0].send(JSON.stringify({
+					type: "ready",
+					initiator: true
+				}))
+				room[1].send(JSON.stringify({
+					type: "ready",
+					initiator: false
+				}))
+			}
 		}
 
 		if (data.type === 'signal') {
