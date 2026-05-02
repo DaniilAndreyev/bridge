@@ -12,7 +12,8 @@
   "dependencies": {
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
