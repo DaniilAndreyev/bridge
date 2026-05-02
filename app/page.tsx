@@ -23,19 +23,19 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen bg-zinc-800 bg-cover flex flex-col items-center justify-center gap-10 px-6">
-      <div className="text-9xl font-semibold text-green-400">LOGO</div>
+    <div className="h-screen bg-stone-800 bg-cover flex flex-col items-center justify-center gap-10 px-6">
+      <div className="text-9xl font-semibold text-emerald-400">LOGO</div>
 
       <div className="flex w-full max-w-lg flex-col items-center gap-4">
-        <div className="flex w-lg items-center gap-2 rounded-lg border border-zinc-600 bg-zinc-900/60 px-4 py-3">
+        <div className="flex w-lg items-center gap-2 rounded-lg border border-stone-600 bg-stone-900/60 px-4 py-3">
           <input
-            className="w-full bg-transparent text-sm text-zinc-100 outline-none"
+            className="w-full bg-transparent text-sm text-stone-100 outline-none"
             placeholder="Your bridge link will appear here"
             readOnly
             value={link}
           />
           <button
-            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium uppercase tracking-wide text-zinc-100 transition hover:bg-zinc-700/40"
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium uppercase tracking-wide text-stone-100 transition hover:bg-stone-700/40"
             onClick={handleCopy}
             disabled={!link}
           >
@@ -57,7 +57,7 @@ export default function Home() {
         </div>
 
         <button
-          className="p-6 py-3 text-base text-zinc-100 transition-colors duration-300 bg-zinc-700 rounded-lg hover:bg-zinc-600 ease px-7"
+          className="p-6 py-3 text-base text-stone-100 transition-colors duration-300 bg-stone-700 rounded-lg hover:bg-stone-600 ease px-7"
           onClick={handleCreate}
         >
           Generate Bridge
