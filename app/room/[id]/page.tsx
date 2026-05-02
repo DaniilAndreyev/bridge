@@ -129,7 +129,7 @@ export default function Room() {
 	// Send a chat message over the established peer connection.
 	function sendMessage() {
 		const peer = peerRef.current
-		if (!peer || connectionClosed || !input.trim()) return
+		if (!peer || connectionClosed || !input.trim() || !peerConnectedRef.current) return
 
 		peer.send(input)
 
@@ -199,7 +199,7 @@ export default function Room() {
 						className="flex-1 rounded-lg border border-stone-600 bg-stone-900/60 px-4 py-3 text-sm text-stone-100 outline-none"
 					/>
 
-					<button className={primaryButtonClass} onClick={sendMessage}>
+					<button className={primaryButtonClass} onClick={sendMessage} disabled={!peerConnectedRef.current}>
 						Send
 					</button>
 				</div>
