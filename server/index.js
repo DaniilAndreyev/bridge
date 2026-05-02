@@ -26,5 +26,10 @@ wss.on('connection', (ws) => {
 
 	ws.on('close', () => {
 		const room = rooms.get(ws.roomId)
+		if (!room) return
+
+		rooms.set(ws.roomId,
+			room.filter(u => u !== ws) // u is a socket
+		)
 	})
 })
