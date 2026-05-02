@@ -1,11 +1,14 @@
 "use client"
 
+// Room page: joins/creates rooms, negotiates WebRTC peers, and renders chat UI.
+
 import { useEffect, useRef, useState } from "react"
 import { useParams, useSearchParams, useRouter } from "next/navigation"
 import { createSocket } from "@/lib/socket"
 import { createPeer } from "@/lib/peer"
 
 export default function Room() {
+	// Room UI: handles signaling, peer connection, and message rendering.
 	const { id } = useParams<{ id: string }>()
 	const searchParams = useSearchParams()
 	const isCreate = searchParams.get("create") === "1"
@@ -23,6 +26,7 @@ export default function Room() {
 	const [connectionClosed, setConnectionClosed] = useState(false)
 	const primaryButtonClass = "p-6 py-3 text-base text-stone-100 transition-colors duration-300 bg-stone-700 rounded-lg hover:bg-stone-600 ease px-7"
 
+	// Add a system message to the message stream.
 	function addSystemMessage(text: string) {
 		setMessages((prev) => [
 			...prev,
@@ -122,6 +126,7 @@ export default function Room() {
 		container.scrollTop = container.scrollHeight
 	}, [messages.length])
 
+	// Send a chat message over the established peer connection.
 	function sendMessage() {
 		const peer = peerRef.current
 		if (!peer || connectionClosed || !input.trim()) return
@@ -136,6 +141,7 @@ export default function Room() {
 		setInput("")
 	}
 
+	// Copy the current room URL for sharing.
 	async function copyRoomUrl() {
 		try {
 			await navigator.clipboard.writeText(window.location.href)
