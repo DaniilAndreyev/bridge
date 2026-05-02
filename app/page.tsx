@@ -1,25 +1,34 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 
 export default function Home() {
   const router = useRouter()
-  const [room, setRoom] = useState("")
+
+  function handleCreate() {
+    const roomId = crypto.randomUUID()
+    router.push(`/room/${roomId}?create=1`)
+  }
+
+  function handleJoin() {
+    const roomId = window.prompt("Enter room id")?.trim()
+    if (!roomId) return
+    router.push(`/room/${roomId}`)
+  }
 
   return (
     <div>
       <h1>Join Room</h1>
 
-      <input
-        value={room}
-        onChange={(e) => setRoom(e.target.value)}
-        placeholder="room id"
-      />
+      <div style={{ display: "flex", gap: 12 }}>
+        <button className="p-9 bg-amber-200" onClick={handleJoin}>
+          Join
+        </button>
 
-      <button className="p-9 bg-amber-200" onClick={() => router.push(`/room/${room}`)}>
-        Join
-      </button>
+        <button className="p-9 bg-emerald-200" onClick={handleCreate}>
+          Create
+        </button>
+      </div>
     </div>
   )
 }
