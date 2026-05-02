@@ -48,8 +48,12 @@ wss.on('connection', (ws) => {
 		const room = rooms.get(ws.roomId)
 		if (!room) return
 
-		rooms.set(ws.roomId,
-			room.filter(u => u !== ws) // u is a socket
-		)
+		const updated = room.filter(u => u !== ws)
+
+		if (updated.length === 0) {
+			rooms.delete(ws.roomId)
+		} else {
+			rooms.set(ws.roomId, updated)
+		}
 	})
 })
