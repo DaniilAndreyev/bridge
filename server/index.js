@@ -12,7 +12,11 @@ wss.on('connection', (ws) => {
 			const { roomId } = data
 
 			if (!rooms.has(roomId)) {
-				rooms.set(roomId, [])
+				ws.send(JSON.stringify({
+					type: "error",
+					message: "Room does not exist"
+				}))
+				return
 			}
 
 			const room = rooms.get(roomId)
@@ -38,6 +42,20 @@ wss.on('connection', (ws) => {
 					initiator: false
 				}))
 			}
+		}
+
+		if (data.type === 'create') {
+			const { roomId } = data
+
+			if (rooms.has(roomId)) {
+				ws.send(JSON.stringify({
+					type: "error",
+					message: "Room already exists"
+				}))
+				return
+			}
+
+			rooms.set(roomId, [])
 		}
 
 		if (data.type === 'signal') {
