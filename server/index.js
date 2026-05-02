@@ -22,6 +22,20 @@ wss.on('connection', (ws) => {
 			room.push(ws)
 			ws.roomId = roomId
 		}
+
+		if (data.type === 'signal') {
+			const room = rooms.get(ws.roomId)
+			if (!room) return
+
+			room.forEach(u => {
+				if (u !== ws) {
+					u.send(JSON.stringify({
+						type: 'signal',
+						signal: data.signal
+					}))
+				}
+			});
+		}
 	})
 
 	ws.on('close', () => {
